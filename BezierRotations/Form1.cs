@@ -1,8 +1,8 @@
 namespace BezierRotations;
 
-public partial class Form1 : Form
+public partial class form_bezierRotations : Form
 {
-    public Form1()
+    public form_bezierRotations()
     {
         InitializeComponent();
     }
