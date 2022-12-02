@@ -302,7 +302,8 @@ partial class form_bezierRotations
 			this.pictureBox_workingArea.Size = new System.Drawing.Size(978, 655);
 			this.pictureBox_workingArea.TabIndex = 1;
 			this.pictureBox_workingArea.TabStop = false;
-			this.pictureBox_workingArea.MouseClick += new System.Windows.Forms.MouseEventHandler(this.pictureBox_workingArea_MouseClick);
+			this.pictureBox_workingArea.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pictureBox_workingArea_MouseDown);
+			this.pictureBox_workingArea.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pictureBox_workingArea_MouseMove);
 			// 
 			// form_bezierRotations
 			// 

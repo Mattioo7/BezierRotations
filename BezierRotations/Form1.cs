@@ -1,8 +1,12 @@
+using System.Data;
+
 namespace BezierRotations;
 
 public partial class form_bezierRotations : Form
 {
-    public form_bezierRotations()
+	ProjectData projectData { get; set; } = new ProjectData();
+
+	public form_bezierRotations()
     {
         InitializeComponent();
 
@@ -16,13 +20,36 @@ public partial class form_bezierRotations : Form
 		Pen pen = new Pen(BackColor);
         Graphics g = Graphics.FromImage(bitmap);
 
-		Drawing drawing = new Drawing(pen, this.pictureBox_workingArea, g);
+		projectData.PictureBox = this.pictureBox_workingArea;
+		projectData.Pen = pen;
+		projectData.graphics = g;
 
-        drawing.drawBezierCurve(10);
+		Drawing.generatePointsForBezierCurve(projectData);
+        Drawing.drawBezierCurve(projectData);
     }
 
-    private void pictureBox_workingArea_MouseClick(object sender, MouseEventArgs e)
-    {
+	private void pictureBox_workingArea_MouseDown(object sender, MouseEventArgs e)
+	{
+		projectData.pressedVertex = Vertex.findVertex(e, projectData.points);
 
-    }
+		if (projectData.pressedVertex != null)
+		{
+			projectData.mouseDown = true;
+
+			projectData.mousePosition.X = projectData.pressedVertex.X;
+			projectData.mousePosition.Y = projectData.pressedVertex.Y;
+		}
+	}
+
+	private void pictureBox_workingArea_MouseMove(object sender, MouseEventArgs e)
+	{
+		if (projectData.mouseDown == true && projectData.pressedVertex != null)
+		{
+			projectData.pressedVertex.X = e.X;
+			projectData.pressedVertex.Y = e.Y;
+
+
+			Drawing.reDraw();
+		}
+	}
 }
