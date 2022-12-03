@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms.VisualStyles;
 
 namespace BezierRotations
 {
@@ -12,6 +15,7 @@ namespace BezierRotations
 		public static void drawBezierCurve(ProjectData projectData)
 		{
 			drawVertices(projectData);
+			drawLines(projectData);
 			projectData.graphics.DrawBeziers(projectData.Pen, Vertex.ToPointFArray(projectData.points));
 
 			projectData.PictureBox.Refresh();
@@ -42,12 +46,12 @@ namespace BezierRotations
 				points.Add(point);
 			}
 			points.Add(endPoint);
-			points.OrderBy(p => p.X);
+			points = points.OrderBy(p => p.X).ToList();
 
 			projectData.points = points;
 		}
 
-		private static void drawVertices(ProjectData projectData)
+		public static void drawVertices(ProjectData projectData)
 		{
 			int RADIUS = projectData.RADIUS;
 
@@ -56,10 +60,23 @@ namespace BezierRotations
 				projectData.graphics.FillEllipse(Brushes.Black, (int)point.X - RADIUS + 2, (int)point.Y - RADIUS + 2, (RADIUS - 2) * 2, (RADIUS - 2) * 2);
 			}
 		}
-
-		public static void reDraw()
+		public static void drawLines(ProjectData projectData)
 		{
+			for (int i = 0; i < projectData.points.Count - 1; ++i)
+			{
+				projectData.graphics.DrawLine(new Pen(Brushes.LightBlue), projectData.points[i].point, projectData.points[i + 1].point);
+			}
+		}
 
+		public static void reDraw(ProjectData projectData)
+		{
+			projectData.graphics.Clear(Color.White);
+			drawVertices(projectData);
+			drawLines(projectData);
+			List<Vector2> vector2s = Vertex.ToVector2List(projectData.points);
+			projectData.bezierLine = BezierCurve.PointList2(vector2s);
+			BezierCurve.drawBezierCurve(projectData);
+			projectData.PictureBox.Refresh();
 		}
 	}
 }

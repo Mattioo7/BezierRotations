@@ -10,36 +10,36 @@ namespace BezierRotations
 {
 	internal class Vertex
 	{
-		public PointF PointF { get; set; }
+		public PointF pointF { get; set; }
 		public Brush brush;
 
 		public Vertex()
 		{
-			this.PointF = new PointF(0, 0);
+			this.pointF = new PointF(0, 0);
 			brush = Brushes.Black;
 		}
 
 		public Vertex(PointF point)
 		{
-			PointF = point;
+			pointF = point;
 			brush = Brushes.Black;
 		}
 
 		public Vertex(PointF point, Brush br)
 		{
-			PointF = point;
+			pointF = point;
 			brush = br;
 		}
 		
 		public Vertex(float x, float y)
 		{
-			PointF = new PointF(x, y);
+			pointF = new PointF(x, y);
 			brush = Brushes.Black;
 		}
 
 		public Vertex(float x, float y, Brush br)
 		{
-			PointF = new PointF(x, y);
+			pointF = new PointF(x, y);
 			brush = br;
 		}
 
@@ -47,12 +47,12 @@ namespace BezierRotations
 		{
 			set
 			{
-				this.PointF = new PointF(X, PointF.Y);
+				this.pointF = new PointF(X, pointF.Y);
 			}
 
 			get
 			{
-				return this.PointF.X;
+				return this.pointF.X;
 			}
 		}
 
@@ -60,43 +60,47 @@ namespace BezierRotations
 		{
 			set
 			{
-				this.PointF = new PointF(PointF.X, Y);
+				this.pointF = new PointF(pointF.X, Y);
 			}
 
 			get
 			{
-				return this.PointF.Y;
+				return this.pointF.Y;
 			}
 		}
 
-		public PointF point => this.PointF;
-		public PointF pointF => this.PointF;
+		public PointF point => this.pointF;
 
 		public static PointF[] ToPointFArray(List<Vertex> vertices)
 		{
 			List<PointF> result = new List<PointF>();
-			result.AddRange(vertices.Select(vertex => vertex.PointF));
+			result.AddRange(vertices.Select(vertex => vertex.pointF));
 			return result.ToArray();
 		}
 
-		public static Vertex? findVertex(MouseEventArgs e, List<Vertex> vertices)
+		public static List<Vector2> ToVector2List(List<Vertex> vertices)
 		{
-			Vertex? foundVertex = null;
+			List<Vector2> result = new List<Vector2>();
+			result.AddRange(vertices.Select(vertex => new Vector2(vertex.X, vertex.Y)));
+			return result;
+		}
+
+		public static Vertex? findVertex(MouseEventArgs e, ProjectData projectData)
+		{
 			int RADIUS = 4;
 
-			foreach (Vertex v in vertices)
+			foreach (Vertex v in projectData.points)
 			{
 				int yDiff = (int)Math.Abs(v.Y - e.Y);
 				int xDiff = (int)Math.Abs(v.X - e.X);
 
 				if (yDiff * yDiff + xDiff * xDiff < 4 * (RADIUS + 1) * (RADIUS + 1))
 				{
-					foundVertex = v;
-					break;
+					return v;
 				}
 			}
 
-			return foundVertex;
+			return null;
 		}
 	}
 }
