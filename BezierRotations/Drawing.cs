@@ -16,12 +16,12 @@ namespace BezierRotations
 		{
 			drawVertices(projectData);
 			drawLines(projectData);
-			projectData.graphics.DrawBeziers(projectData.Pen, Vertex.ToPointFArray(projectData.points));
+			projectData.graphics.DrawBeziers(projectData.pen, Vertex.ToPointFArray(projectData.points));
 
-			projectData.PictureBox.Refresh();
+			projectData.pictureBox.Refresh();
 		}
 
-		public static void generatePointsForBezierCurve(ProjectData projectData)
+		public static List<Vertex> generatePointsForBezierCurve(ProjectData projectData)
 		{
 			List<Vertex> points = new List<Vertex>();
 
@@ -32,23 +32,23 @@ namespace BezierRotations
 				// 3k + 1
 			}
 
-			Vertex startPoint = new Vertex(50, projectData.PictureBox.Height / 2 + 100);
-			Vertex endPoint = new Vertex(projectData.PictureBox.Width - 50, projectData.PictureBox.Height / 2 - 100);
+			Vertex startPoint = new Vertex(50, projectData.pictureBox.Height / 2 + 100);
+			Vertex endPoint = new Vertex(projectData.pictureBox.Width - 50, projectData.pictureBox.Height / 2 - 100);
 
 			points.Add(startPoint);
 
 			Random random = new Random();
 			for (int i = 0; i < projectData.numberOfPoints - 2; ++i)
 			{
-				int x = random.Next((int)(0.25 * projectData.PictureBox.Width), (int)(0.75 * projectData.PictureBox.Width));
-				int y = random.Next((int)(0.25 * projectData.PictureBox.Height), (int)(0.75 * projectData.PictureBox.Height));
+				int x = random.Next((int)(0.25 * projectData.pictureBox.Width), (int)(0.75 * projectData.pictureBox.Width));
+				int y = random.Next((int)(0.25 * projectData.pictureBox.Height), (int)(0.75 * projectData.pictureBox.Height));
 				Vertex point = new Vertex(x, y);
 				points.Add(point);
 			}
 			points.Add(endPoint);
 			points = points.OrderBy(p => p.X).ToList();
 
-			projectData.points = points;
+			return points;
 		}
 
 		public static void drawVertices(ProjectData projectData)
@@ -76,7 +76,7 @@ namespace BezierRotations
 			List<Vector2> vector2s = Vertex.ToVector2List(projectData.points);
 			projectData.bezierLine = BezierCurve.PointList2(vector2s);
 			BezierCurve.drawBezierCurve(projectData);
-			projectData.PictureBox.Refresh();
+			projectData.pictureBox.Refresh();
 		}
 	}
 }

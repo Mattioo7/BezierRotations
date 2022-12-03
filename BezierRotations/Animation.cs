@@ -29,8 +29,7 @@ namespace BezierRotations
 			}
 		}
 
-		public static float slope(float x1, float y1, float x2,
-							  float y2)
+		public static float slope(float x1, float y1, float x2, float y2)
 		{
 			if (x2 - x1 != 0F)
 			{
@@ -41,7 +40,7 @@ namespace BezierRotations
 
 		public static void naiveRotateMatrix(ProjectData projectData, float angle)
 		{
-			BmpPixelSnoop newTextureSnoop = new BmpPixelSnoop(projectData.textureSnoop.);
+			BmpPixelSnoop newTextureSnoop;// = new BmpPixelSnoop(projectData.textureSnoop);
 
 			for (int i = 0; i < projectData.textureSnoop.Width; i++)
 			{
@@ -51,8 +50,8 @@ namespace BezierRotations
 					if (color.A != 0)
 					{
 						Vector2 point = new Vector2(i, j);
-						Vector2 rotatedPoint = naiveRotationForPoint(point, angle);
-						projectData.textureSnoop.SetPixel((int)rotatedPoint.X, (int)rotatedPoint.Y, color);
+						//Vector2 rotatedPoint = naiveRotationForPoint(point.X, point.Y, angle);
+						//projectData.textureSnoop.SetPixel((int)rotatedPoint.X, (int)rotatedPoint.Y, color);
 					}
 				}
 			}
@@ -109,7 +108,6 @@ namespace BezierRotations
 					projectData.textureSnoop.SetPixel(width - x + ii, y, pixel);
 				}
 				projectData.textureSnoop.SetPixel(ii, y, prev_left);
-
 			}
 		}
 

@@ -17,11 +17,13 @@ namespace BezierRotations
 
 		public int RADIUS { get; set; } = 8;
 
-		public Pen Pen { get; set; }
+		public Pen pen { get; set; }
 
-		public PictureBox PictureBox { get; set; }
+		public PictureBox pictureBox { get; set; }
 
 		public Graphics graphics { get; set; }
+		
+		public BmpPixelSnoop bitmapSnoop { get; set; }
 
 		public int numberOfPoints { get; set; } = 10;
 

@@ -15,19 +15,32 @@ public partial class form_bezierRotations : Form
         run();
     }
 
-    private void run()
+	public void run()
     {
+		// pictureBox
 		Bitmap bitmap = new Bitmap(this.pictureBox_workingArea.Size.Width, this.pictureBox_workingArea.Size.Height);
 		this.pictureBox_workingArea.Image = bitmap;
+		projectData.pictureBox = this.pictureBox_workingArea;
+		
+		// pen
 		Pen pen = new Pen(BackColor);
-        Graphics g = Graphics.FromImage(bitmap);
+		projectData.pen = pen;
 
-		projectData.PictureBox = this.pictureBox_workingArea;
-		projectData.Pen = pen;
+		// graphics
+        Graphics g = Graphics.FromImage(bitmap);
 		projectData.graphics = g;
+
+		// bitmapSnoop
+		using (var bitmapSnoop = new BmpPixelSnoop((Bitmap)projectData.pictureBox.Image))
+		{
+			projectData.bitmapSnoop = bitmapSnoop;
+		}
+
+		// numberOfPoints
 		projectData.numberOfPoints = 10;
 
-		Drawing.generatePointsForBezierCurve(projectData);
+		// points
+		projectData.points = Drawing.generatePointsForBezierCurve(projectData);
 
 		Drawing.drawVertices(projectData);
 		Drawing.drawLines(projectData);

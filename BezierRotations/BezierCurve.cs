@@ -5,6 +5,7 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace BezierRotations
 {
@@ -38,9 +39,8 @@ namespace BezierRotations
 			int N = controlPoints.Count - 1;
 			if (N > 16)
 			{
-				Debug.WriteLine("You have used more than 16 control points. " +
-				  "The maximum control points allowed is 16.");
-				controlPoints.RemoveRange(16, controlPoints.Count - 16);			// Mogę w sumie też obcinać do 16 liczbę punktów
+				Debug.WriteLine("You have used more than 16 control points. The maximum control points allowed is 16.");
+				controlPoints.RemoveRange(16, controlPoints.Count - 16);			// Mogę w sumie też obcinać do 16 liczbę punktów (chyba raczej do 12)
 			}
 
 			List<Vector2> points = new List<Vector2>();
@@ -56,6 +56,30 @@ namespace BezierRotations
 			}
 
 			return points;
+		}
+
+		public static List<Vector2> calculateDerivativeForBezierCurve(List<Vector2> controlPoints, List<Vector2> points, float interval = 0.0001f)
+		{
+			int N = controlPoints.Count - 1;
+			if (N > 16)
+			{
+				Debug.WriteLine("You have used more than 16 control points. The maximum control points allowed is 16.");
+				controlPoints.RemoveRange(16, N - 16);            // Mogę w sumie też obcinać do 16 liczbę punktów (chyba raczej do 12)
+			}
+
+			List<Vector2> slopes = new List<Vector2>();
+			for (float t = 0.0f; t <= 1.0f + interval - 0.0001f; t += interval)
+			{
+				Vector2 p = new Vector2();
+				for (int i = 0; i < N - 1; ++i)
+				{
+					Vector2 bn = N * Bernstein(N - 1, i, t) * (controlPoints[i + 1] - controlPoints[i]);
+					p += bn;
+				}
+				points.Add(p);
+			}
+
+			return slopes;
 		}
 
 		public static void drawBezierCurve(ProjectData projectData)
