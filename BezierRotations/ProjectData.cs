@@ -46,7 +46,8 @@ namespace BezierRotations
 		// others
 		public int RADIUS { get; set; } = 8;
 		public Pen pen { get; set; }
-		public float angle { get; set; }
+		public float angle { get; set; } = -0.1f;
+		public float angleDiff { get; set; } = -0.1f;
 
 
 	}

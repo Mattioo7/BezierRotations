@@ -85,7 +85,7 @@ public partial class form_bezierRotations : Form
 
 		// animation setup
 		timer.Tick += new EventHandler((sender, e) => Animation.naiveRotationAnimation(sender, e, projectData));
-		timer.Interval = 1000;
+		timer.Interval = 50;
 		timer.Start();
 		timer.Enabled = true;
 	}

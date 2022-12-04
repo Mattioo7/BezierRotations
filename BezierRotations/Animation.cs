@@ -44,8 +44,10 @@ namespace BezierRotations
 			naiveRotateMatrix(projectData);
 		}
 		
-		public static void naiveRotateMatrix(ProjectData projectData, float angle = -0.2f)
+		public static void naiveRotateMatrix(ProjectData projectData)
 		{
+			float angle = projectData.angle;
+			
 			// narysowanie nowej kanwy bez tekstury
 			projectData.graphicsTmp.Clear(Color.White);
 			Drawing.drawLines(projectData, tmp: true);
@@ -64,25 +66,36 @@ namespace BezierRotations
 			{
 				for (int i = 0; i < projectData.texture.Width; ++i)
 				{
-					(float newX, float newY) = naiveRotationForPoint(-projectData.texture.Width / 2 + i, -projectData.texture.Height / 2 + j, angle);
-					newX += projectData.texture.Width / 2;
-					newY += projectData.texture.Height / 2;
+					// rotate pixel
+					float nx = (float)((i - projectData.texture.Width / 2) * Math.Cos(angle) + (j - projectData.texture.Height / 2) * Math.Sin(angle));
+					float ny = (float)(-(i - projectData.texture.Width / 2) * Math.Sin(angle) + (j - projectData.texture.Height / 2) * Math.Cos(angle));
 
-					if (newX >= 0 && newX < projectData.texture.Width && newY >= 0 && newY < projectData.texture.Height)
+					nx = (float)(Math.Round(nx) + projectData.texture.Width / 2);
+					ny = (float)(Math.Round(ny) + projectData.texture.Height / 2);
+
+					if (nx >= 0 && nx < projectData.texture.Width - 1 && ny >= 0 && ny < projectData.texture.Height - 1)
 					{
 						Color color = projectData.textureSnoop.GetPixel(i, j);
-						projectData.textureSnoopTmp.SetPixel((int)newX, (int)newY, color);
+						projectData.textureSnoopTmp.SetPixel((int)(nx + 0.5f), (int)(ny + 0.5f), color);
 					}
+
+					/*(float newX, float newY) = naiveRotationForPoint(-projectData.texture.Width / 2f + i, -projectData.texture.Height / 2f + j, angle);
+					newX += projectData.texture.Width / 2f;
+					newY += projectData.texture.Height / 2f;
+
+					if (newX >= 0 && newX < projectData.texture.Width - 1 && newY >= 0 && newY < projectData.texture.Height - 1)
+					{
+						Color color = projectData.textureSnoop.GetPixel(i, j);
+						projectData.textureSnoopTmp.SetPixel((int)(newX + 0.5f), (int)(newY + 0.5f), color);
+					}*/
 				}
 			}
 
 			// nałożenie tekstury z szachownicą na pomocniczą kanwę
 			projectData.graphicsTmp.DrawImage(projectData.textureTmp, 500, 100);
 
-			// podmiana tekstury
-			projectData.texture = projectData.textureTmp;
-			projectData.textureGraphics = projectData.textureGraphicsTmp;
-			projectData.textureSnoop = projectData.textureSnoopTmp;
+			// zwiększenie kąta
+			projectData.angle += projectData.angleDiff;
 
 			// zamiana canvasów; bez znaczenia, bo i tak jest czyszczona, ale nie tworzę nowej chociaż
 			(projectData.pictureBox.Image, projectData.bitmapTmp) = (projectData.bitmapTmp, (Bitmap)projectData.pictureBox.Image);
@@ -92,7 +105,7 @@ namespace BezierRotations
 			projectData.pictureBox.Refresh();
 		}
 
-		public static (float x, float y) naiveRotationForPoint(float x, float y, float alfa = -0.1f)
+		public static (float x, float y) naiveRotationForPoint(float x, float y, float alfa)
 		{
 			float cos = (float)Math.Cos(alfa);
 			float sin = (float)Math.Sin(alfa);
