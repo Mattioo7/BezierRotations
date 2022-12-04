@@ -51,6 +51,7 @@ partial class form_bezierRotations
 			this.button_stop = new System.Windows.Forms.Button();
 			this.button_start = new System.Windows.Forms.Button();
 			this.pictureBox_workingArea = new System.Windows.Forms.PictureBox();
+			this.button_redraw = new System.Windows.Forms.Button();
 			this.tableLayoutPanel_main.SuspendLayout();
 			this.tableLayoutPanel_right.SuspendLayout();
 			this.groupBox_beziersCurve.SuspendLayout();
@@ -166,6 +167,7 @@ partial class form_bezierRotations
 			// 
 			// groupBox_image
 			// 
+			this.groupBox_image.Controls.Add(this.button_redraw);
 			this.groupBox_image.Controls.Add(this.checkBox_gray);
 			this.groupBox_image.Controls.Add(this.button_loadImage);
 			this.groupBox_image.Controls.Add(this.pictureBox_image);
@@ -306,6 +308,16 @@ partial class form_bezierRotations
 			this.pictureBox_workingArea.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pictureBox_workingArea_MouseMove);
 			this.pictureBox_workingArea.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pictureBox_workingArea_MouseUp);
 			// 
+			// button_redraw
+			// 
+			this.button_redraw.Location = new System.Drawing.Point(57, 116);
+			this.button_redraw.Name = "button_redraw";
+			this.button_redraw.Size = new System.Drawing.Size(75, 23);
+			this.button_redraw.TabIndex = 3;
+			this.button_redraw.Text = "Redraw";
+			this.button_redraw.UseVisualStyleBackColor = true;
+			this.button_redraw.Click += new System.EventHandler(this.button_redraw_Click);
+			// 
 			// form_bezierRotations
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -354,4 +366,5 @@ partial class form_bezierRotations
 	private Label label_numberOfPoints;
 	private Button button_loadImage;
 	private CheckBox checkBox_gray;
+	private Button button_redraw;
 }

@@ -82,14 +82,23 @@ namespace BezierRotations
 			return slopes;
 		}
 
-		public static void drawBezierCurve(ProjectData projectData)
+		// przenieść do Drawing
+		public static void drawBezierCurve(ProjectData projectData, bool tmp = false)
 		{
+			if (tmp == true)
+			{
+				foreach (Vector2 point in projectData.bezierLine)
+				{
+					projectData.bitmapSnoopTmp.SetPixel((int)point.X, (int)point.Y, Color.Black);
+				}
+			}
+
 			foreach (Vector2 point in projectData.bezierLine)
 			{
-				projectData.graphics.FillEllipse(Brushes.Black, (int)point.X, (int)point.Y, 2, 2);
+				projectData.bitmapSnoop.SetPixel((int)point.X, (int)point.Y, Color.Black);
 			}
 		}
-
+		
 		private static float Bernstein(int n, int i, float t)
 		{
 			float t_i = (float)Math.Pow(t, i);

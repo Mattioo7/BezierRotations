@@ -1,12 +1,14 @@
 using System.Data;
 using System.Diagnostics;
 using System.Numerics;
+using Timer = System.Windows.Forms.Timer;
 
 namespace BezierRotations;
 
 public partial class form_bezierRotations : Form
 {
 	ProjectData projectData { get; set; } = new ProjectData();
+	Timer timer = new Timer();
 
 	public form_bezierRotations()
     {
@@ -21,7 +23,19 @@ public partial class form_bezierRotations : Form
 		Bitmap bitmap = new Bitmap(this.pictureBox_workingArea.Size.Width, this.pictureBox_workingArea.Size.Height);
 		this.pictureBox_workingArea.Image = bitmap;
 		projectData.pictureBox = this.pictureBox_workingArea;
+		using (var bitmapSnoop = new BmpPixelSnoop((Bitmap)projectData.pictureBox.Image))
+		{
+			projectData.bitmapSnoop = bitmapSnoop;
+		}
 		
+		// bitmapTmp
+		Bitmap bitmapTmp = new Bitmap(this.pictureBox_workingArea.Size.Width, this.pictureBox_workingArea.Size.Height);
+		projectData.bitmapTmp = bitmapTmp;
+		using (var bitmapSnoopTmp = new BmpPixelSnoop((Bitmap)projectData.bitmapTmp))
+		{
+			projectData.bitmapSnoopTmp = bitmapSnoopTmp;
+		}
+
 		// pen
 		Pen pen = new Pen(BackColor);
 		projectData.pen = pen;
@@ -29,35 +43,51 @@ public partial class form_bezierRotations : Form
 		// graphics
         Graphics g = Graphics.FromImage(bitmap);
 		projectData.graphics = g;
+        Graphics gTmp = Graphics.FromImage(bitmapTmp);
+		projectData.graphicsTmp = gTmp;
 
-		// bitmapSnoop
-		using (var bitmapSnoop = new BmpPixelSnoop((Bitmap)projectData.pictureBox.Image))
-		{
-			projectData.bitmapSnoop = bitmapSnoop;
-		}
-
+		
 		// numberOfPoints
-		projectData.numberOfPoints = 10;
+		projectData.numberOfPoints = 6;
 
 		// points
 		projectData.points = Drawing.generatePointsForBezierCurve(projectData);
 
-		Drawing.drawVertices(projectData);
+		// drawing bezier segments
 		Drawing.drawLines(projectData);
+		Drawing.drawVertices(projectData);
+		
+		// bezierLine
 		List<Vector2> vector2s = Vertex.ToVector2List(projectData.points);
 		projectData.bezierLine = BezierCurve.PointList2(vector2s);
 		BezierCurve.drawBezierCurve(projectData);
-		//Drawing.drawBezierCurve(projectData);
 
 		// default texture
 		string path = Path.Combine(Environment.CurrentDirectory, @"Props\", "board.jpg");
-		projectData.texture = new Bitmap(path);
-		projectData.texture = new Bitmap(projectData.texture, this.pictureBox_workingArea.Width, this.pictureBox_workingArea.Height);
+		projectData.texture = new Bitmap(151, 151);
+		Graphics gTexture = Graphics.FromImage(projectData.texture);
+		projectData.textureGraphics = gTexture;
+
+
+		Bitmap texture = new Bitmap(path);
+		texture = new Bitmap(texture, 99, 99);
+		projectData.textureGraphics.DrawImage(texture, (projectData.texture.Width - texture.Width) / 2, (projectData.texture.Height - texture.Height) / 2, texture.Width, texture.Height);
+
+		projectData.textureTable = new List<(int x, int y)>();
 
 		using (var textureSnoop = new BmpPixelSnoop(projectData.texture))
 		{
 			projectData.textureSnoop = textureSnoop;
 		}
+
+		// draw texture
+		projectData.graphics.DrawImage(projectData.texture, 500, 100);
+
+		// animation setup
+		timer.Tick += new EventHandler((sender, e) => Animation.naiveRotationAnimation(sender, e, projectData));
+		timer.Interval = 1000;
+		timer.Start();
+		timer.Enabled = true;
 	}
 
 	private void pictureBox_workingArea_MouseDown(object sender, MouseEventArgs e)
@@ -101,5 +131,11 @@ public partial class form_bezierRotations : Form
 		}
 
 		projectData.mouseDown = false;
+	}
+
+	private void button_redraw_Click(object sender, EventArgs e)
+	{
+		Animation.naiveRotateMatrix(projectData);
+		Debug.WriteLine("Redraw");
 	}
 }

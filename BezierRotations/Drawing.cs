@@ -29,7 +29,6 @@ namespace BezierRotations
 			{
 				// wyskakuje okienko albo jakiś error czy cokolwiek
 				// wgl mogę zrobić walidację na input
-				// 3k + 1
 			}
 
 			Vertex startPoint = new Vertex(50, projectData.pictureBox.Height / 2 + 100);
@@ -51,31 +50,75 @@ namespace BezierRotations
 			return points;
 		}
 
-		public static void drawVertices(ProjectData projectData)
+		public static void drawVertices(ProjectData projectData, bool tmp = false)
 		{
 			int RADIUS = projectData.RADIUS;
+
+			if (tmp == true)
+			{
+				foreach (Vertex point in projectData.points)
+				{
+					projectData.graphicsTmp.FillEllipse(Brushes.Black, (int)point.X - RADIUS + 2, (int)point.Y - RADIUS + 2, (RADIUS - 2) * 2, (RADIUS - 2) * 2);
+				}
+				return;
+			}
 
 			foreach (Vertex point in projectData.points)
 			{
 				projectData.graphics.FillEllipse(Brushes.Black, (int)point.X - RADIUS + 2, (int)point.Y - RADIUS + 2, (RADIUS - 2) * 2, (RADIUS - 2) * 2);
 			}
 		}
-		public static void drawLines(ProjectData projectData)
+		public static void drawLines(ProjectData projectData, bool tmp = false)
 		{
+			if (tmp == true)
+			{
+				for (int i = 0; i < projectData.points.Count - 1; ++i)
+				{
+					projectData.graphicsTmp.DrawLine(new Pen(Brushes.LightBlue), projectData.points[i].point, projectData.points[i + 1].point);
+				}
+				return;
+			}
+			
 			for (int i = 0; i < projectData.points.Count - 1; ++i)
 			{
 				projectData.graphics.DrawLine(new Pen(Brushes.LightBlue), projectData.points[i].point, projectData.points[i + 1].point);
 			}
 		}
 
+		public static void drawTexture(ProjectData projectData, (int x, int y) center)
+		{
+			// center: 600, 200
+			int startX = center.x - projectData.texture.Width / 2;
+			int startY = center.y - projectData.texture.Height / 2;
+
+			//projectData.graphics.DrawImage(projectData.texture, startX, startY);
+
+			for (int i = 0; i < projectData.texture.Width; ++i)
+			{
+				for (int j = 0; j < projectData.texture.Height; ++j)
+				{
+					Color color = projectData.texture.GetPixel(i, j);
+					if (color.A != 0)
+					{
+						projectData.textureTable.Add((startX + i, startY + j));
+						projectData.bitmapSnoop.SetPixel(startX + i, startY + j, color);
+					}
+				}
+			}
+		}
+
 		public static void reDraw(ProjectData projectData)
 		{
 			projectData.graphics.Clear(Color.White);
-			drawVertices(projectData);
 			drawLines(projectData);
+			drawVertices(projectData);
 			List<Vector2> vector2s = Vertex.ToVector2List(projectData.points);
 			projectData.bezierLine = BezierCurve.PointList2(vector2s);
 			BezierCurve.drawBezierCurve(projectData);
+
+			projectData.graphics.DrawImage(projectData.texture, 500, 100);
+			//Drawing.drawTexture(projectData, (300, 300));
+
 			projectData.pictureBox.Refresh();
 		}
 	}
