@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 
 namespace BezierRotations
@@ -25,10 +27,9 @@ namespace BezierRotations
 		{
 			List<Vertex> points = new List<Vertex>();
 
-			if (projectData.numberOfPoints % 4 != 0)
+			if (projectData.numberOfPoints > 12)
 			{
-				// wyskakuje okienko albo jakiś error czy cokolwiek
-				// wgl mogę zrobić walidację na input
+				projectData.numberOfPoints = 12;
 			}
 
 			Vertex startPoint = new Vertex(50, projectData.pictureBox.Height / 2 + 100);
@@ -39,8 +40,8 @@ namespace BezierRotations
 			Random random = new Random();
 			for (int i = 0; i < projectData.numberOfPoints - 2; ++i)
 			{
-				int x = random.Next((int)(0.25 * projectData.pictureBox.Width), (int)(0.75 * projectData.pictureBox.Width));
-				int y = random.Next((int)(0.25 * projectData.pictureBox.Height), (int)(0.75 * projectData.pictureBox.Height));
+				int x = random.Next((int)(0.1 * projectData.pictureBox.Width), (int)(0.9 * projectData.pictureBox.Width));
+				int y = random.Next((int)(0.1 * projectData.pictureBox.Height), (int)(0.9 * projectData.pictureBox.Height));
 				Vertex point = new Vertex(x, y);
 				points.Add(point);
 			}
@@ -125,8 +126,33 @@ namespace BezierRotations
 			}
 		}
 
-		public static void drawTexture(ProjectData projectData, Vector2 center, bool tmp = false)
+		public static void drawTextureTmp2(ProjectData projectData, (int x, int y) center)
 		{
+			// obliczenie lewgo górnego wierzchołka
+			int startX = center.x - projectData.texture.Width / 2;
+			int startY = center.y - projectData.texture.Height / 2;
+
+			for (int i = 0; i < projectData.texture.Width; ++i)
+			{
+				for (int j = 0; j < projectData.texture.Height; ++j)
+				{
+					Color color = projectData.textureSnoopTmp2.GetPixel(i, j);
+					if (color.A != 0 && startX + i >= 0 && startX + i < projectData.bitmapSnoopTmp.Width - 1 && startY + j >= 0 && startY + j < projectData.bitmapSnoopTmp.Height - 1)
+					{
+						projectData.bitmapSnoopTmp.SetPixel(startX + i, startY + j, color);
+					}
+				}
+			}
+		}
+
+		public static void drawTexture(ProjectData projectData, Vector2 center, bool tmp = false, int mode = 0)
+		{
+			if (mode == 2)
+			{
+				drawTextureTmp2(projectData, ((int x, int y))(center.X, center.Y));
+				return;
+			}
+					
 			if (tmp == true)
 			{
 				drawTextureTmp(projectData, ((int x, int y))(center.X, center.Y));
@@ -136,13 +162,51 @@ namespace BezierRotations
 			drawTexture(projectData, ((int x, int y))(center.X, center.Y));
 		}
 
+		public static void convertToGrayScale(ProjectData projectData)
+		{
+			ColorMatrix colorMatrix = new ColorMatrix(
+			   new float[][]
+			   {
+				   new float[] {.3f, .3f, .3f, 0, 0},
+				   new float[] {.59f, .59f, .59f, 0, 0},
+				   new float[] {.11f, .11f, .11f, 0, 0},
+				   new float[] {0, 0, 0, 1, 0},
+				   new float[] {0, 0, 0, 0, 1}
+			   });
+			ImageAttributes img = new ImageAttributes();
+			img.SetColorMatrix(colorMatrix);
+			
+
+			Bitmap newBmp = new Bitmap(projectData.texture.Width, projectData.texture.Height);
+			Graphics newBmpGraphics = Graphics.FromImage(newBmp);
+			newBmpGraphics.DrawImage(projectData.texture, new Rectangle(0, 0, projectData.texture.Width, projectData.texture.Height), 0, 0, projectData.texture.Width, projectData.texture.Height, GraphicsUnit.Pixel, img);
+			projectData.texture = newBmp;
+			projectData.textureGraphics = newBmpGraphics;
+			using (var textureSnoop = new BmpPixelSnoop(projectData.texture))
+			{
+				projectData.textureSnoop = textureSnoop;
+			}
+
+			Bitmap newBmpTmp = new Bitmap(projectData.textureTmp.Width, projectData.textureTmp.Height);
+			Graphics newBmpGraphicsTmp = Graphics.FromImage(newBmpTmp);
+			newBmpGraphicsTmp.DrawImage(projectData.textureTmp, new Rectangle(0, 0, projectData.textureTmp.Width, projectData.textureTmp.Height), 0, 0, projectData.textureTmp.Width, projectData.textureTmp.Height, GraphicsUnit.Pixel, img);
+			projectData.textureTmp = newBmpTmp;
+			projectData.textureGraphicsTmp = newBmpGraphicsTmp;
+			using (var textureSnoopTmp = new BmpPixelSnoop(projectData.textureTmp))
+			{
+				projectData.textureSnoopTmp = textureSnoopTmp;
+			}
+
+		}
+
 		public static void reDraw(ProjectData projectData)
 		{
 			projectData.graphics.Clear(Color.White);
 			drawLines(projectData);
 			drawVertices(projectData);
-			List<Vector2> vector2s = Vertex.ToVector2List(projectData.controlPoints);
-			projectData.bezierLine = BezierCurve.PointList2(vector2s);
+			List<Vector2> controlPointsAsVectors = Vertex.ToVector2List(projectData.controlPoints);
+			projectData.bezierLine = BezierCurve.PointList2(controlPointsAsVectors);
+			projectData.bezierLineDerivatives = BezierCurve.calculateDerivativeForBezierCurve(controlPointsAsVectors);
 			BezierCurve.drawBezierCurve(projectData);
 
 			//projectData.graphics.DrawImage(projectData.texture, 500, 100);

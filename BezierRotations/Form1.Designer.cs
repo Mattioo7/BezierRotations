@@ -33,7 +33,7 @@ partial class form_bezierRotations
 			this.tableLayoutPanel_right = new System.Windows.Forms.TableLayoutPanel();
 			this.groupBox_beziersCurve = new System.Windows.Forms.GroupBox();
 			this.checkBox_visibleLine = new System.Windows.Forms.CheckBox();
-			this.button4 = new System.Windows.Forms.Button();
+			this.button_saveLine = new System.Windows.Forms.Button();
 			this.button_loadLine = new System.Windows.Forms.Button();
 			this.button_generate = new System.Windows.Forms.Button();
 			this.textBox_numberOfPoints = new System.Windows.Forms.TextBox();
@@ -46,12 +46,12 @@ partial class form_bezierRotations
 			this.radioButton_filtering = new System.Windows.Forms.RadioButton();
 			this.radioButton_naiveRotations = new System.Windows.Forms.RadioButton();
 			this.groupBox_animation = new System.Windows.Forms.GroupBox();
+			this.radioButton_onlyMoving = new System.Windows.Forms.RadioButton();
 			this.radioButton_moving = new System.Windows.Forms.RadioButton();
 			this.radioButton_rotation = new System.Windows.Forms.RadioButton();
 			this.button_stop = new System.Windows.Forms.Button();
 			this.button_start = new System.Windows.Forms.Button();
 			this.pictureBox_workingArea = new System.Windows.Forms.PictureBox();
-			this.button_redraw = new System.Windows.Forms.Button();
 			this.tableLayoutPanel_main.SuspendLayout();
 			this.tableLayoutPanel_right.SuspendLayout();
 			this.groupBox_beziersCurve.SuspendLayout();
@@ -99,7 +99,7 @@ partial class form_bezierRotations
 			// groupBox_beziersCurve
 			// 
 			this.groupBox_beziersCurve.Controls.Add(this.checkBox_visibleLine);
-			this.groupBox_beziersCurve.Controls.Add(this.button4);
+			this.groupBox_beziersCurve.Controls.Add(this.button_saveLine);
 			this.groupBox_beziersCurve.Controls.Add(this.button_loadLine);
 			this.groupBox_beziersCurve.Controls.Add(this.button_generate);
 			this.groupBox_beziersCurve.Controls.Add(this.textBox_numberOfPoints);
@@ -115,21 +115,25 @@ partial class form_bezierRotations
 			// checkBox_visibleLine
 			// 
 			this.checkBox_visibleLine.AutoSize = true;
+			this.checkBox_visibleLine.Checked = true;
+			this.checkBox_visibleLine.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.checkBox_visibleLine.Location = new System.Drawing.Point(6, 72);
 			this.checkBox_visibleLine.Name = "checkBox_visibleLine";
 			this.checkBox_visibleLine.Size = new System.Drawing.Size(105, 19);
 			this.checkBox_visibleLine.TabIndex = 5;
 			this.checkBox_visibleLine.Text = "Visible polyline";
 			this.checkBox_visibleLine.UseVisualStyleBackColor = true;
+			this.checkBox_visibleLine.CheckedChanged += new System.EventHandler(this.checkBox_visibleLine_CheckedChanged);
 			// 
-			// button4
+			// button_saveLine
 			// 
-			this.button4.Location = new System.Drawing.Point(107, 103);
-			this.button4.Name = "button4";
-			this.button4.Size = new System.Drawing.Size(75, 23);
-			this.button4.TabIndex = 4;
-			this.button4.Text = "Save";
-			this.button4.UseVisualStyleBackColor = true;
+			this.button_saveLine.Location = new System.Drawing.Point(107, 103);
+			this.button_saveLine.Name = "button_saveLine";
+			this.button_saveLine.Size = new System.Drawing.Size(75, 23);
+			this.button_saveLine.TabIndex = 4;
+			this.button_saveLine.Text = "Save";
+			this.button_saveLine.UseVisualStyleBackColor = true;
+			this.button_saveLine.Click += new System.EventHandler(this.button_saveLine_Click);
 			// 
 			// button_loadLine
 			// 
@@ -139,6 +143,7 @@ partial class form_bezierRotations
 			this.button_loadLine.TabIndex = 3;
 			this.button_loadLine.Text = "Load ";
 			this.button_loadLine.UseVisualStyleBackColor = true;
+			this.button_loadLine.Click += new System.EventHandler(this.button_loadLine_Click);
 			// 
 			// button_generate
 			// 
@@ -148,6 +153,7 @@ partial class form_bezierRotations
 			this.button_generate.TabIndex = 2;
 			this.button_generate.Text = "Generate";
 			this.button_generate.UseVisualStyleBackColor = true;
+			this.button_generate.Click += new System.EventHandler(this.button_generate_Click);
 			// 
 			// textBox_numberOfPoints
 			// 
@@ -167,7 +173,6 @@ partial class form_bezierRotations
 			// 
 			// groupBox_image
 			// 
-			this.groupBox_image.Controls.Add(this.button_redraw);
 			this.groupBox_image.Controls.Add(this.checkBox_gray);
 			this.groupBox_image.Controls.Add(this.button_loadImage);
 			this.groupBox_image.Controls.Add(this.pictureBox_image);
@@ -188,6 +193,7 @@ partial class form_bezierRotations
 			this.checkBox_gray.TabIndex = 2;
 			this.checkBox_gray.Text = "Gray colors";
 			this.checkBox_gray.UseVisualStyleBackColor = true;
+			this.checkBox_gray.CheckedChanged += new System.EventHandler(this.checkBox_gray_CheckedChanged);
 			// 
 			// button_loadImage
 			// 
@@ -197,13 +203,14 @@ partial class form_bezierRotations
 			this.button_loadImage.TabIndex = 1;
 			this.button_loadImage.Text = "Load";
 			this.button_loadImage.UseVisualStyleBackColor = true;
+			this.button_loadImage.Click += new System.EventHandler(this.button_loadImage_Click);
 			// 
 			// pictureBox_image
 			// 
 			this.pictureBox_image.BackColor = System.Drawing.SystemColors.ActiveCaption;
-			this.pictureBox_image.Location = new System.Drawing.Point(132, 39);
+			this.pictureBox_image.Location = new System.Drawing.Point(102, 22);
 			this.pictureBox_image.Name = "pictureBox_image";
-			this.pictureBox_image.Size = new System.Drawing.Size(50, 50);
+			this.pictureBox_image.Size = new System.Drawing.Size(80, 80);
 			this.pictureBox_image.TabIndex = 0;
 			this.pictureBox_image.TabStop = false;
 			// 
@@ -226,13 +233,14 @@ partial class form_bezierRotations
 			this.radioButton_filtering.Name = "radioButton_filtering";
 			this.radioButton_filtering.Size = new System.Drawing.Size(94, 19);
 			this.radioButton_filtering.TabIndex = 1;
-			this.radioButton_filtering.TabStop = true;
 			this.radioButton_filtering.Text = "With filtering";
 			this.radioButton_filtering.UseVisualStyleBackColor = true;
+			this.radioButton_filtering.CheckedChanged += new System.EventHandler(this.radioButton_filtering_CheckedChanged);
 			// 
 			// radioButton_naiveRotations
 			// 
 			this.radioButton_naiveRotations.AutoSize = true;
+			this.radioButton_naiveRotations.Checked = true;
 			this.radioButton_naiveRotations.Location = new System.Drawing.Point(6, 39);
 			this.radioButton_naiveRotations.Name = "radioButton_naiveRotations";
 			this.radioButton_naiveRotations.Size = new System.Drawing.Size(105, 19);
@@ -240,9 +248,11 @@ partial class form_bezierRotations
 			this.radioButton_naiveRotations.TabStop = true;
 			this.radioButton_naiveRotations.Text = "Naive rotations";
 			this.radioButton_naiveRotations.UseVisualStyleBackColor = true;
+			this.radioButton_naiveRotations.CheckedChanged += new System.EventHandler(this.radioButton_naiveRotations_CheckedChanged);
 			// 
 			// groupBox_animation
 			// 
+			this.groupBox_animation.Controls.Add(this.radioButton_onlyMoving);
 			this.groupBox_animation.Controls.Add(this.radioButton_moving);
 			this.groupBox_animation.Controls.Add(this.radioButton_rotation);
 			this.groupBox_animation.Controls.Add(this.button_stop);
@@ -255,20 +265,32 @@ partial class form_bezierRotations
 			this.groupBox_animation.TabStop = false;
 			this.groupBox_animation.Text = "Animation";
 			// 
+			// radioButton_onlyMoving
+			// 
+			this.radioButton_onlyMoving.AutoSize = true;
+			this.radioButton_onlyMoving.Location = new System.Drawing.Point(6, 81);
+			this.radioButton_onlyMoving.Name = "radioButton_onlyMoving";
+			this.radioButton_onlyMoving.Size = new System.Drawing.Size(94, 19);
+			this.radioButton_onlyMoving.TabIndex = 4;
+			this.radioButton_onlyMoving.Text = "Only moving";
+			this.radioButton_onlyMoving.UseVisualStyleBackColor = true;
+			this.radioButton_onlyMoving.CheckedChanged += new System.EventHandler(this.radioButton_onlyMoving_CheckedChanged);
+			// 
 			// radioButton_moving
 			// 
 			this.radioButton_moving.AutoSize = true;
-			this.radioButton_moving.Location = new System.Drawing.Point(6, 65);
+			this.radioButton_moving.Location = new System.Drawing.Point(6, 56);
 			this.radioButton_moving.Name = "radioButton_moving";
 			this.radioButton_moving.Size = new System.Drawing.Size(135, 19);
 			this.radioButton_moving.TabIndex = 3;
-			this.radioButton_moving.TabStop = true;
 			this.radioButton_moving.Text = "Moving on the curve";
 			this.radioButton_moving.UseVisualStyleBackColor = true;
+			this.radioButton_moving.CheckedChanged += new System.EventHandler(this.radioButton_moving_CheckedChanged);
 			// 
 			// radioButton_rotation
 			// 
 			this.radioButton_rotation.AutoSize = true;
+			this.radioButton_rotation.Checked = true;
 			this.radioButton_rotation.Location = new System.Drawing.Point(6, 31);
 			this.radioButton_rotation.Name = "radioButton_rotation";
 			this.radioButton_rotation.Size = new System.Drawing.Size(70, 19);
@@ -276,24 +298,27 @@ partial class form_bezierRotations
 			this.radioButton_rotation.TabStop = true;
 			this.radioButton_rotation.Text = "Rotation";
 			this.radioButton_rotation.UseVisualStyleBackColor = true;
+			this.radioButton_rotation.CheckedChanged += new System.EventHandler(this.radioButton_rotation_CheckedChanged);
 			// 
 			// button_stop
 			// 
-			this.button_stop.Location = new System.Drawing.Point(107, 106);
+			this.button_stop.Location = new System.Drawing.Point(107, 131);
 			this.button_stop.Name = "button_stop";
 			this.button_stop.Size = new System.Drawing.Size(75, 23);
 			this.button_stop.TabIndex = 1;
 			this.button_stop.Text = "Stop";
 			this.button_stop.UseVisualStyleBackColor = true;
+			this.button_stop.Click += new System.EventHandler(this.button_stop_Click);
 			// 
 			// button_start
 			// 
-			this.button_start.Location = new System.Drawing.Point(6, 106);
+			this.button_start.Location = new System.Drawing.Point(6, 131);
 			this.button_start.Name = "button_start";
 			this.button_start.Size = new System.Drawing.Size(75, 23);
 			this.button_start.TabIndex = 0;
 			this.button_start.Text = "Start";
 			this.button_start.UseVisualStyleBackColor = true;
+			this.button_start.Click += new System.EventHandler(this.button_start_Click);
 			// 
 			// pictureBox_workingArea
 			// 
@@ -307,16 +332,6 @@ partial class form_bezierRotations
 			this.pictureBox_workingArea.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pictureBox_workingArea_MouseDown);
 			this.pictureBox_workingArea.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pictureBox_workingArea_MouseMove);
 			this.pictureBox_workingArea.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pictureBox_workingArea_MouseUp);
-			// 
-			// button_redraw
-			// 
-			this.button_redraw.Location = new System.Drawing.Point(57, 116);
-			this.button_redraw.Name = "button_redraw";
-			this.button_redraw.Size = new System.Drawing.Size(75, 23);
-			this.button_redraw.TabIndex = 3;
-			this.button_redraw.Text = "Redraw";
-			this.button_redraw.UseVisualStyleBackColor = true;
-			this.button_redraw.Click += new System.EventHandler(this.button_redraw_Click);
 			// 
 			// form_bezierRotations
 			// 
@@ -359,12 +374,12 @@ partial class form_bezierRotations
     private Button button_start;
     private PictureBox pictureBox_workingArea;
 	private CheckBox checkBox_visibleLine;
-	private Button button4;
+	private Button button_saveLine;
 	private Button button_loadLine;
 	private Button button_generate;
 	private TextBox textBox_numberOfPoints;
 	private Label label_numberOfPoints;
 	private Button button_loadImage;
 	private CheckBox checkBox_gray;
-	private Button button_redraw;
+	private RadioButton radioButton_onlyMoving;
 }

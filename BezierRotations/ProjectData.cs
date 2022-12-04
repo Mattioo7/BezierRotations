@@ -10,11 +10,13 @@ namespace BezierRotations
 	internal class ProjectData
 	{
 		// bezier curve
-		public int numberOfPoints { get; set; }
+		public int numberOfPoints { get; set; } = 5;
 		public List<Vertex> controlPoints { get; set; }
 		public List<Vector2> bezierLine { get; set; }
+		public List<Vector2> bezierLineDerivatives { get; set; }
 		public int currentPosition { get; set; } = 0;
-		
+		public bool visiblePolyline { get; set; } = true;
+
 
 		// mouse
 		public bool mouseDown { get; set; } = false;
@@ -33,6 +35,7 @@ namespace BezierRotations
 
 
 		// texture
+		public string path { get; set; } = Path.Combine(Environment.CurrentDirectory, @"Props\", "board.jpg");
 		public Bitmap texture { get; set; }
 		public Graphics textureGraphics { get; set; }
 		public BmpPixelSnoop textureSnoop { get; set; }
@@ -42,6 +45,15 @@ namespace BezierRotations
 		public Graphics textureGraphicsTmp { get; set; }
 		public BmpPixelSnoop textureSnoopTmp { get; set; }
 
+		// textureTmp
+		public Bitmap textureTmp2 { get; set; }
+		public Graphics textureGraphicsTmp2 { get; set; }
+		public BmpPixelSnoop textureSnoopTmp2 { get; set; }
+
+		// GUI handlers
+		public Animation.AnimationType animationType { get; set; }
+		public Animation.RotationType rotationType { get; set; }
+		
 
 		// others
 		public int RADIUS { get; set; } = 8;
