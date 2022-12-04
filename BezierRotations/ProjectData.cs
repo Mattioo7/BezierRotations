@@ -11,10 +11,11 @@ namespace BezierRotations
 	{
 		// bezier curve
 		public int numberOfPoints { get; set; }
-		public List<Vertex> points { get; set; }
+		public List<Vertex> controlPoints { get; set; }
 		public List<Vector2> bezierLine { get; set; }
-
+		public int currentPosition { get; set; } = 0;
 		
+
 		// mouse
 		public bool mouseDown { get; set; } = false;
 		public Vertex? pressedVertex { get; set; }
@@ -35,7 +36,6 @@ namespace BezierRotations
 		public Bitmap texture { get; set; }
 		public Graphics textureGraphics { get; set; }
 		public BmpPixelSnoop textureSnoop { get; set; }
-		public List<(int x, int y)> textureTable { get; set; }
 
 		// textureTmp
 		public Bitmap textureTmp { get; set; }
@@ -48,7 +48,6 @@ namespace BezierRotations
 		public Pen pen { get; set; }
 		public float angle { get; set; } = -0.1f;
 		public float angleDiff { get; set; } = -0.1f;
-
 
 	}
 }

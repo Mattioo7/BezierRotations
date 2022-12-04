@@ -89,7 +89,7 @@ namespace BezierRotations
 		{
 			int RADIUS = 4;
 
-			foreach (Vertex v in projectData.points)
+			foreach (Vertex v in projectData.controlPoints)
 			{
 				int yDiff = (int)Math.Abs(v.Y - e.Y);
 				int xDiff = (int)Math.Abs(v.X - e.X);

@@ -51,14 +51,14 @@ public partial class form_bezierRotations : Form
 		projectData.numberOfPoints = 6;
 
 		// points
-		projectData.points = Drawing.generatePointsForBezierCurve(projectData);
+		projectData.controlPoints = Drawing.generatePointsForBezierCurve(projectData);
 
 		// drawing bezier segments
 		Drawing.drawLines(projectData);
 		Drawing.drawVertices(projectData);
 		
 		// bezierLine
-		List<Vector2> vector2s = Vertex.ToVector2List(projectData.points);
+		List<Vector2> vector2s = Vertex.ToVector2List(projectData.controlPoints);
 		projectData.bezierLine = BezierCurve.PointList2(vector2s);
 		BezierCurve.drawBezierCurve(projectData);
 
@@ -73,15 +73,22 @@ public partial class form_bezierRotations : Form
 		texture = new Bitmap(texture, 99, 99);
 		projectData.textureGraphics.DrawImage(texture, (projectData.texture.Width - texture.Width) / 2, (projectData.texture.Height - texture.Height) / 2, texture.Width, texture.Height);
 
-		projectData.textureTable = new List<(int x, int y)>();
-
 		using (var textureSnoop = new BmpPixelSnoop(projectData.texture))
 		{
 			projectData.textureSnoop = textureSnoop;
 		}
 
+		// inicjalizacja pomocniczej tekstury
+		projectData.textureTmp = new Bitmap(projectData.texture);
+		projectData.textureGraphicsTmp = Graphics.FromImage(projectData.textureTmp);
+		using (var newTextureSnoop = new BmpPixelSnoop(projectData.textureTmp))
+		{
+			projectData.textureSnoopTmp = newTextureSnoop;
+		}
+
 		// draw texture
-		projectData.graphics.DrawImage(projectData.texture, 500, 100);
+		//projectData.graphics.DrawImage(projectData.texture, projectData.bezierLine[projectData.currentPosition]);
+		Drawing.drawTexture(projectData, projectData.bezierLine[projectData.currentPosition]);
 
 		// animation setup
 		timer.Tick += new EventHandler((sender, e) => Animation.naiveRotationAnimation(sender, e, projectData));

@@ -42,6 +42,7 @@ namespace BezierRotations
 		public static void naiveRotationAnimation(Object obj, EventArgs myEventArgs, ProjectData projectData)
 		{
 			naiveRotateMatrix(projectData);
+			moveAlongBezierLine(projectData);
 		}
 		
 		public static void naiveRotateMatrix(ProjectData projectData)
@@ -54,45 +55,32 @@ namespace BezierRotations
 			Drawing.drawVertices(projectData, tmp: true);
 			BezierCurve.drawBezierCurve(projectData, tmp: true);
 
-			// inicjalizacja pomocniczej tekstury
-			projectData.textureTmp = new Bitmap(projectData.texture.Width, projectData.texture.Height);
-			projectData.textureGraphicsTmp = Graphics.FromImage(projectData.textureTmp);
-			using (var newTextureSnoop = new BmpPixelSnoop(projectData.textureTmp))
+			// inicjalizacja nowe tekstury
+			projectData.texture = new Bitmap(projectData.textureTmp.Width, projectData.textureTmp.Height);
+			projectData.textureGraphics = Graphics.FromImage(projectData.texture);
+			using (var newTextureSnoop = new BmpPixelSnoop(projectData.texture))
 			{
-				projectData.textureSnoopTmp = newTextureSnoop;
+				projectData.textureSnoop = newTextureSnoop;
 			}
 
-			for (int j = 0; j < projectData.texture.Height; ++j)
+			for (int j = 0; j < projectData.textureTmp.Height; ++j)
 			{
-				for (int i = 0; i < projectData.texture.Width; ++i)
+				for (int i = 0; i < projectData.textureTmp.Width; ++i)
 				{
-					// rotate pixel
-					float nx = (float)((i - projectData.texture.Width / 2) * Math.Cos(angle) + (j - projectData.texture.Height / 2) * Math.Sin(angle));
-					float ny = (float)(-(i - projectData.texture.Width / 2) * Math.Sin(angle) + (j - projectData.texture.Height / 2) * Math.Cos(angle));
+					(float newX, float newY) = naiveRotationForPoint(-projectData.textureTmp.Width / 2f + i, -projectData.textureTmp.Height / 2f + j, angle);
+					newX += projectData.textureTmp.Width / 2f;
+					newY += projectData.textureTmp.Height / 2f;
 
-					nx = (float)(Math.Round(nx) + projectData.texture.Width / 2);
-					ny = (float)(Math.Round(ny) + projectData.texture.Height / 2);
-
-					if (nx >= 0 && nx < projectData.texture.Width - 1 && ny >= 0 && ny < projectData.texture.Height - 1)
+					if (newX >= 0 && newX < projectData.textureTmp.Width - 1 && newY >= 0 && newY < projectData.textureTmp.Height - 1)
 					{
-						Color color = projectData.textureSnoop.GetPixel(i, j);
-						projectData.textureSnoopTmp.SetPixel((int)(nx + 0.5f), (int)(ny + 0.5f), color);
+						Color color = projectData.textureSnoopTmp.GetPixel(i, j);
+						projectData.textureSnoop.SetPixel((int)(newX + 0.5f), (int)(newY + 0.5f), color);
 					}
-
-					/*(float newX, float newY) = naiveRotationForPoint(-projectData.texture.Width / 2f + i, -projectData.texture.Height / 2f + j, angle);
-					newX += projectData.texture.Width / 2f;
-					newY += projectData.texture.Height / 2f;
-
-					if (newX >= 0 && newX < projectData.texture.Width - 1 && newY >= 0 && newY < projectData.texture.Height - 1)
-					{
-						Color color = projectData.textureSnoop.GetPixel(i, j);
-						projectData.textureSnoopTmp.SetPixel((int)(newX + 0.5f), (int)(newY + 0.5f), color);
-					}*/
 				}
 			}
 
 			// nałożenie tekstury z szachownicą na pomocniczą kanwę
-			projectData.graphicsTmp.DrawImage(projectData.textureTmp, 500, 100);
+			Drawing.drawTexture(projectData, projectData.bezierLine[projectData.currentPosition], tmp: true);
 
 			// zwiększenie kąta
 			projectData.angle += projectData.angleDiff;
@@ -157,9 +145,44 @@ namespace BezierRotations
 			}
 		}
 
+		public static void Yshear(ProjectData projectData, float shear, int width, int height)
+		{
+			
+		}
 
-
-
+		public static void moveAlongBezierLine(ProjectData projectData)
+		{
+			if (projectData.currentPosition < projectData.bezierLine.Count - 10)
+			{
+				++projectData.currentPosition;
+				++projectData.currentPosition;
+				++projectData.currentPosition;
+				++projectData.currentPosition;
+				++projectData.currentPosition;
+				++projectData.currentPosition;
+				++projectData.currentPosition;
+				++projectData.currentPosition;
+				++projectData.currentPosition;
+				++projectData.currentPosition;
+				++projectData.currentPosition;
+				++projectData.currentPosition;
+				++projectData.currentPosition;
+				++projectData.currentPosition;
+				++projectData.currentPosition;
+				++projectData.currentPosition;
+				++projectData.currentPosition;
+				++projectData.currentPosition;
+				++projectData.currentPosition;
+				++projectData.currentPosition;
+				++projectData.currentPosition;
+			}
+			else
+			{
+				projectData.currentPosition = 0;
+			}
+		}
+		
+		
 
 	}
 }
