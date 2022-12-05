@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "BezierRotations": {
+      "commandName": "Project",
+      "nativeDebugging": false
+    }
+  }
+}

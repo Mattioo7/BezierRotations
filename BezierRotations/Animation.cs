@@ -236,7 +236,7 @@ namespace BezierRotations
 			//projectData.pictureBox.Refresh();
 			shear(projectData, 2);
 			//projectData.pictureBox.Refresh();
-			shear(projectData, 3);
+			//shear(projectData, 3);
 			projectData.angle -= projectData.angleDiff;
 			projectData.pictureBox.Refresh();
 			return;
@@ -442,6 +442,38 @@ namespace BezierRotations
 		{
 			//projectData.angle -= projectData.angleDiff;
 			float angle = projectData.angle;
+			angle = angle * 180.0f / (float)Math.PI;
+			angle = angle % 360;
+			if (angle < 0) angle += 360;
+
+			int quater = 1;
+			if (angle < 90)
+			{
+				quater = 1;
+				angle /= 90;
+			}
+			else if (angle < 2 * 90)
+			{
+				angle -= 90;
+				angle /= 90;
+				quater = 2;
+				projectData.textureTmp.RotateFlip(RotateFlipType.Rotate270FlipNone);
+			}
+			else if (angle < 3 * 90)
+			{
+				angle -= 2 * 90;
+				angle /= 90;
+				quater = 3;
+				projectData.textureTmp.RotateFlip(RotateFlipType.Rotate180FlipNone);
+			}
+			else if (angle < 4 * 90)
+			{
+				angle -= 3 * 90;
+				angle /= 90;
+				quater = 4;
+				projectData.textureTmp.RotateFlip(RotateFlipType.Rotate90FlipNone);
+			}
+
 
 			// narysowanie nowej kanwy bez tekstury
 			projectData.graphicsTmp.Clear(Color.White);
@@ -451,10 +483,6 @@ namespace BezierRotations
 
 			// inicjalizacja nowe tekstury
 			projectData.textureTmp2 = new Bitmap(projectData.texture);
-
-			//projectData.graphicsTmp.DrawImage(projectData.textureTmp2, 500, 500);
-			//projectData.pictureBox.Refresh();
-
 			projectData.textureGraphicsTmp2 = Graphics.FromImage(projectData.textureTmp2);
 			using (var newTextureSnoopTmp2 = new BmpPixelSnoop(projectData.textureTmp2))
 			{
@@ -515,12 +543,69 @@ namespace BezierRotations
 			(projectData.bitmapSnoop, projectData.bitmapSnoopTmp) = (projectData.bitmapSnoopTmp, projectData.bitmapSnoop);
 
 			//projectData.pictureBox.Refresh();
+
+			if (quater == 2)
+			{
+				projectData.textureTmp.RotateFlip(RotateFlipType.Rotate90FlipNone);
+			}
+			else if (quater == 3)
+			{
+				projectData.textureTmp.RotateFlip(RotateFlipType.Rotate180FlipNone);
+			}
+			else if (quater == 4)
+			{
+				projectData.textureTmp.RotateFlip(RotateFlipType.Rotate270FlipNone);
+			}
 		}
 
 		private static void shear1(ProjectData projectData, int mode = 0)
 		{
+			
+			
 			//projectData.angle -= projectData.angleDiff;
 			float angle = projectData.angle;
+			angle = angle * 180.0f / (float)Math.PI;
+			angle = angle % 360;
+			if (angle < 0) angle += 360;
+
+			int quater = 1;
+			if (angle < 90)
+			{
+				quater = 1;
+				angle /= 90;
+			}
+			else if (angle < 2 * 90)
+			{
+				angle -= 90;
+				angle /= 90;
+				quater = 2;
+				projectData.textureTmp.RotateFlip(RotateFlipType.Rotate270FlipNone);
+			}
+			else if (angle < 3 * 90)
+			{
+				angle -= 2 * 90;
+				angle /= 90;
+				quater = 3;
+				projectData.textureTmp.RotateFlip(RotateFlipType.Rotate180FlipNone);
+			}
+			else if (angle < 4 * 90)
+			{
+				angle -= 3 * 90;
+				angle /= 90;
+				quater = 4;
+				projectData.textureTmp.RotateFlip(RotateFlipType.Rotate90FlipNone);
+			}
+
+			//projectData.graphics.DrawImage(projectData.textureTmp, 500, 100);
+			//projectData.pictureBox.Refresh();
+
+			// inicjalizacja nowe tekstury
+			projectData.textureTmp2 = new Bitmap(projectData.textureTmp);
+			projectData.textureGraphicsTmp2 = Graphics.FromImage(projectData.textureTmp2);
+			using (var newTextureSnoopTmp2 = new BmpPixelSnoop(projectData.textureTmp2))
+			{
+				projectData.textureSnoopTmp2 = newTextureSnoopTmp2;
+			}
 
 			// narysowanie nowej kanwy bez tekstury
 			projectData.graphicsTmp.Clear(Color.White);
@@ -528,7 +613,8 @@ namespace BezierRotations
 			Drawing.drawVertices(projectData, tmp: true);
 			BezierCurve.drawBezierCurve(projectData, tmp: true);
 
-			//projectData.graphicsTmp.DrawImage(projectData.texture, 500, 500);
+			//projectData.graphics.DrawImage(projectData.textureTmp2, 500, 500);
+			//projectData.pictureBox.Refresh();
 
 			// inicjalizacja nowe tekstury
 			projectData.texture = new Bitmap(projectData.textureTmp.Width, projectData.textureTmp.Height);
@@ -567,7 +653,7 @@ namespace BezierRotations
 
 					if (newX >= 0 && newX < projectData.textureTmp.Width - 1 && newY >= 0 && newY < projectData.textureTmp.Height - 1)
 					{
-						Color color = projectData.textureSnoopTmp.GetPixel(i, j);
+						Color color = projectData.textureSnoopTmp2.GetPixel(i, j);
 						projectData.textureSnoop.SetPixel((int)(newX + 0.5f), (int)(newY + 0.5f), color);
 					}
 				}
@@ -584,7 +670,25 @@ namespace BezierRotations
 			(projectData.graphics, projectData.graphicsTmp) = (projectData.graphicsTmp, projectData.graphics);
 			(projectData.bitmapSnoop, projectData.bitmapSnoopTmp) = (projectData.bitmapSnoopTmp, projectData.bitmapSnoop);
 
+			//projectData.graphics.DrawImage(projectData.textureTmp, 300, 300);
 			//projectData.pictureBox.Refresh();
+			//projectData.pictureBox.Refresh();
+			if (quater == 2)
+			{
+				projectData.textureTmp.RotateFlip(RotateFlipType.Rotate90FlipNone);
+			}
+			else if (quater == 3)
+			{
+				projectData.textureTmp.RotateFlip(RotateFlipType.Rotate180FlipNone);
+			}
+			else if (quater == 4)
+			{
+				projectData.textureTmp.RotateFlip(RotateFlipType.Rotate270FlipNone);
+			}
+
+			//projectData.graphics.DrawImage(projectData.textureTmp, 300, 500);
+			//projectData.pictureBox.Refresh();
+			//return;
 		}
 
 		private static void moveAlongBezierLine(ProjectData projectData)
